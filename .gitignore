@@ -1,0 +1,47 @@
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Logs ###
+*.log
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### IDE ###
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+
+### Java ###
+*.class
+
+### Env ###
+.env
+
+### Node (pour Angular plus tard) ###
+node_modules/
+dist/
+
+### Docker ###
+*.pid
