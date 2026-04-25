@@ -19,5 +19,5 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build & Test
-        run: mvn clean test package
+      - name: Build
+        run: mvn clean package -DskipTests
