@@ -1,6 +1,10 @@
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
   profiles:
     active: dev
+
   datasource:
     url: jdbc:mysql://mysql:3306/gestion_users_roles?useSSL=false&serverTimezone=UTC
     username: root
