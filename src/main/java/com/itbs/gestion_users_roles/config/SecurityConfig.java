@@ -16,10 +16,14 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(
+                                "/actuator/**",
+                                "/login",
+                                "/error"
+                        ).permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form.disable())   // ❌ enlève login page
+                .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .build();
     }
