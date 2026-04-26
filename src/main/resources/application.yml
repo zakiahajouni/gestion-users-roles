@@ -2,18 +2,27 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 
-  profiles:
-    active: dev
-
   datasource:
-    url: jdbc:mysql://mysql:3306/gestion_users_roles?useSSL=false&serverTimezone=UTC
-    username: root
-    password: root
+    url: jdbc:mysql://mysql-db:3306/gestion_users_roles?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: user
+    password: password
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+  endpoint:
+    prometheus:
+      enabled: true
+
+  metrics:
+    export:
+      prometheus:
+        enabled: true
