@@ -2,9 +2,11 @@ package com.itbs.gestion_users_roles.controller;
 
 import com.itbs.gestion_users_roles.entity.Utilisateur;
 import com.itbs.gestion_users_roles.service.UtilisateurService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.Data;
 
 import java.net.URI;
 import java.util.List;
@@ -57,7 +59,13 @@ public class UtilisateurController {
     }
 
     @PostMapping("/authenticate")
-    public Utilisateur authenticate(@RequestParam String email, @RequestParam String password) {
-        return utilisateurService.authenticate(email, password);
+    public Utilisateur authenticate(@RequestBody LoginRequest loginRequest) {
+        return utilisateurService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+    }
+
+    @Data
+    public static class LoginRequest {
+        private String email;
+        private String password;
     }
 }

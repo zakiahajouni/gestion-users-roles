@@ -5,8 +5,11 @@ import lombok.*;
 
 @Entity
 @Table(name = "users")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Utilisateur {
 
     @Id
@@ -16,8 +19,12 @@ public class Utilisateur {
     @Column(nullable = false)
     private String nom;
 
+    private String prenom;
+
     @Column(unique = true, nullable = false)
     private String email;
+
+    private String telephone;
 
     @Column(nullable = false)
     private String motDePasse;
@@ -26,5 +33,5 @@ public class Utilisateur {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    private boolean actif = true;
+    private boolean actif = false;
 }
