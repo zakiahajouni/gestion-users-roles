@@ -26,7 +26,7 @@ public class Utilisateur {
 
     private String telephone;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String motDePasse;
 
     @ManyToOne(fetch = FetchType.EAGER)
