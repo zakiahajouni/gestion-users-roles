@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.itbs.gestion_users_roles.entity.Role;
 import com.itbs.gestion_users_roles.entity.Utilisateur;
+import com.itbs.gestion_users_roles.repository.RoleRepository;
 import com.itbs.gestion_users_roles.repository.UtilisateurRepository;
 import com.itbs.gestion_users_roles.service.EmailService;
 import com.itbs.gestion_users_roles.service.UtilisateurService;
@@ -22,15 +24,18 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private final UtilisateurRepository utilisateurRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
-    
+    private final RoleRepository roleRepository;
+
   public UtilisateurServiceImpl(
         UtilisateurRepository utilisateurRepository,
-        EmailService emailService
+        EmailService emailService,
+        RoleRepository roleRepository
 ) {
 
     this.utilisateurRepository = utilisateurRepository;
     this.emailService = emailService;
     this.passwordEncoder = new BCryptPasswordEncoder();
+    this.roleRepository = roleRepository;
 }
 
     @Override
@@ -50,10 +55,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur not found with email: " + email));
     }
 
-  @Override
+@Override
 public Utilisateur create(Utilisateur utilisateur) {
 
-    // check duplicate email
     if (utilisateurRepository.findByEmail(utilisateur.getEmail()).isPresent()) {
         throw new ResponseStatusException(
                 HttpStatus.CONFLICT,
@@ -61,11 +65,14 @@ public Utilisateur create(Utilisateur utilisateur) {
         );
     }
 
-    utilisateur.setActif(false);
+    // 🔥 FORCE ROLE USER (id = 3)
+    Role userRole = roleRepository.findById(3L)
+            .orElseThrow(() -> new RuntimeException("Role USER introuvable"));
 
-    utilisateur.setMotDePasse(
-            passwordEncoder.encode(utilisateur.getMotDePasse())
-    );
+    utilisateur.setRole(userRole);
+
+    utilisateur.setActif(false);
+    utilisateur.setMotDePasse(null);
 
     return utilisateurRepository.save(utilisateur);
 }

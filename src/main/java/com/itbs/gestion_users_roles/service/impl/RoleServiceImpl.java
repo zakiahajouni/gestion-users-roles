@@ -1,14 +1,15 @@
 package com.itbs.gestion_users_roles.service.impl;
 
-import com.itbs.gestion_users_roles.entity.Permission;
-import com.itbs.gestion_users_roles.entity.Role;
-import com.itbs.gestion_users_roles.repository.RoleRepository;
-import com.itbs.gestion_users_roles.repository.PermissionRepository;
-import com.itbs.gestion_users_roles.service.RoleService;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.itbs.gestion_users_roles.entity.Permission;
+import com.itbs.gestion_users_roles.entity.Role;
+import com.itbs.gestion_users_roles.repository.PermissionRepository;
+import com.itbs.gestion_users_roles.repository.RoleRepository;
+import com.itbs.gestion_users_roles.service.RoleService;
 
 @Service
 @Transactional
@@ -69,4 +70,5 @@ public class RoleServiceImpl implements RoleService {
         role.getPermissions().remove(permission);
         return roleRepository.save(role);
     }
+    
 }
