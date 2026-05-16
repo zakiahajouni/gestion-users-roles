@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.itbs.gestion_users_roles.entity.Notification;
 import com.itbs.gestion_users_roles.entity.Role;
 import com.itbs.gestion_users_roles.entity.Utilisateur;
 import com.itbs.gestion_users_roles.repository.RoleRepository;
 import com.itbs.gestion_users_roles.repository.UtilisateurRepository;
 import com.itbs.gestion_users_roles.service.EmailService;
+import com.itbs.gestion_users_roles.service.NotificationService;
 import com.itbs.gestion_users_roles.service.UtilisateurService;
 
 @Service
@@ -25,17 +27,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final RoleRepository roleRepository;
+    private final NotificationService notificationService;
 
   public UtilisateurServiceImpl(
         UtilisateurRepository utilisateurRepository,
         EmailService emailService,
-        RoleRepository roleRepository
+        RoleRepository roleRepository,
+        NotificationService notificationService
 ) {
 
     this.utilisateurRepository = utilisateurRepository;
     this.emailService = emailService;
     this.passwordEncoder = new BCryptPasswordEncoder();
     this.roleRepository = roleRepository;
+    this.notificationService = notificationService;
 }
 
     @Override
@@ -74,8 +79,37 @@ public Utilisateur create(Utilisateur utilisateur) {
     utilisateur.setActif(false);
     utilisateur.setMotDePasse(null);
 
-    return utilisateurRepository.save(utilisateur);
+Utilisateur saved = utilisateurRepository.save(utilisateur);
+
+// récupérer SYS ADMIN
+Role sysAdminRole = roleRepository.findById(1L)
+        .orElseThrow();
+
+List<Utilisateur> sysAdmins =
+        utilisateurRepository.findAll()
+        .stream()
+        .filter(u ->
+                u.getRole() != null &&
+                u.getRole().getId().equals(sysAdminRole.getId())
+        )
+        .toList();
+
+for (Utilisateur admin : sysAdmins) {
+
+    Notification notification = Notification.builder()
+            .titre("Nouvel utilisateur")
+            .message(
+                "Nouvel utilisateur inscrit : "
+                + saved.getNom()
+                + " (" + saved.getEmail() + ")"
+            )
+            .utilisateur(admin)
+            .build();
+
+    notificationService.create(notification);
 }
+
+return saved;}
 
 @Override
 public Utilisateur update(Long id, Utilisateur utilisateur) {
@@ -96,13 +130,9 @@ public Utilisateur update(Long id, Utilisateur utilisateur) {
 
         existing.setEmail(utilisateur.getEmail());
     }
-
-    // ROLE
     existing.setRole(utilisateur.getRole());
 
-    // =========================
-    // ACTIVATION LOGIC
-    // =========================
+
     if (wasInactive && willBeActive) {
 
         String rawPassword = generateRandomPassword();
@@ -122,7 +152,6 @@ public Utilisateur update(Long id, Utilisateur utilisateur) {
         return existing;
     }
 
-    // SIMPLE UPDATE (no activation)
     existing.setActif(willBeActive);
 
     return utilisateurRepository.save(existing);

@@ -1,5 +1,7 @@
 package com.itbs.gestion_users_roles.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
